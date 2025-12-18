@@ -114,6 +114,16 @@ cp /var/www/fusionpbx/app/event_guard/resources/service/debian.service /etc/syst
 apt install cron
 (crontab -l; echo "* * * * * $(which php) /var/www/fusionpbx/app/xml_cdr/xml_cdr_import.php 300") | crontab
 
+#change logo basebs
+mkdir -p /root/build/
+cd /root/build/
+echo "Change Logo Basebs"
+git clone https://github.com/kietcaodev/fusionpbx.git logo_basebs
+cd logo_basebs
+rm -rf /var/www/fusionpbx/themes/default/images
+rm -rf /var/www/fusionpbx/themes/default/favicon.ico
+cp -r /root/build/logo_basebs/* /var/www/fusionpbx/themes/default/
+
 #welcome message
 echo ""
 echo ""
