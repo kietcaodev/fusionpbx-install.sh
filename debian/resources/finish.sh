@@ -124,6 +124,10 @@ rm -rf /var/www/fusionpbx/themes/default/images
 rm -rf /var/www/fusionpbx/themes/default/favicon.ico
 cp -r /root/build/logo_basebs/* /var/www/fusionpbx/themes/default/
 
+#change menu style to inline
+echo "Change Menu Style to Inline"
+psql --host=$database_host --port=$database_port --username=$database_username -c "UPDATE v_default_settings SET default_setting_value = 'inline' WHERE default_setting_subcategory = 'menu_style';"
+
 #restart nginx 
 systemctl restart nginx
 sleep 2
