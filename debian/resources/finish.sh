@@ -124,6 +124,9 @@ rm -rf /var/www/fusionpbx/themes/default/images
 rm -rf /var/www/fusionpbx/themes/default/favicon.ico
 cp -r /root/build/logo_basebs/* /var/www/fusionpbx/themes/default/
 
+#restart nginx 
+systemctl restart nginx
+sleep 2
 #welcome message
 echo ""
 echo ""

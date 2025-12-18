@@ -5,7 +5,7 @@ verbose () {
 }
 error () {
 	echo "${red}$1${normal}"
-	}
+}
 warning () {
 	echo "${yellow}$1${normal}"
 }
