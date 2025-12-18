@@ -4,7 +4,7 @@
 cd "$(dirname "$0")"
 
 #set execute permissions for all resource scripts
-chmod +x resources/*.sh
+find resources/ -name "*.sh" -exec chmod +x {} \;
 
 #includes
 . ./resources/config.sh
