@@ -23,19 +23,6 @@ wget -O - https://raw.githubusercontent.com/kietcaodev/fusionpbx-install.sh/mast
 cd /usr/src/fusionpbx-install.sh/debian && ./install.sh
 ```
 
-**Manual Install:**
-
-```sh
-# Clone the repository
-cd /usr/src
-git clone https://github.com/kietcaodev/fusionpbx-install.sh.git
-
-# Run the installation
-cd /usr/src/fusionpbx-install.sh/debian
-chmod +x pre-install.sh install.sh
-./pre-install.sh
-./install.sh
-```
 
 ## What Gets Installed
 
