@@ -3,6 +3,9 @@
 #move to script directory so all relative paths work
 cd "$(dirname "$0")"
 
+#set execute permissions for all resource scripts
+chmod +x resources/*.sh
+
 #includes
 . ./resources/config.sh
 . ./resources/colors.sh
