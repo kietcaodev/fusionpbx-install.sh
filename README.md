@@ -1,68 +1,165 @@
 
 FusionPBX Install
 --------------------------------------
-A quick install guide & scripts for installing FusionPBX. It is recommended to start with a minimal install of the operating system. Notes on further tweaking your configuration are at end of the file.
+A streamlined installation script for installing FusionPBX on Debian-based systems. This script automates the setup of FusionPBX along with FreeSWITCH, PostgreSQL, Nginx, PHP, and other required components.
 
-## Operating Systems
+## Requirements
 
-### Debian and Raspberry OS
-Debian is the preferred operating system by the FreeSWITCH developers. It supports the latest video dependencies and should be used if you want to do video mixing. Download Debian at https://cdimage.debian.org/cdimage/release/current/
+- Fresh installation of Debian 11 (Bullseye) or Debian 12 (Bookworm)
+- Minimal server installation recommended
+- Root access or sudo privileges
+- Internet connection
+
+## Supported Operating System
+
+### Debian 11/12 and Raspberry Pi OS
+
+Debian is the preferred and officially supported operating system. It provides stable packages and excellent compatibility with FreeSWITCH and FusionPBX.
+
+**Quick Install:**
 
 ```sh
-wget -O - https://raw.githubusercontent.com/fusionpbx/fusionpbx-install.sh/master/debian/pre-install.sh | sh;
+wget -O - https://raw.githubusercontent.com/kietcaodev/fusionpbx-install.sh/master/debian/pre-install.sh | sh;
 cd /usr/src/fusionpbx-install.sh/debian && ./install.sh
 ```
 
-### Ubuntu and Raspberry OS
-```sh
-wget -O - https://raw.githubusercontent.com/fusionpbx/fusionpbx-install.sh/master/ubuntu/pre-install.sh | sh;
-cd /usr/src/fusionpbx-install.sh/ubuntu && ./install.sh
-```
-
-### Devuan
-If you like Debian but rather not bother with systemd, Devuan is a "drop in" replacement.
-Devuan ASCII is based on Stretch, so you will find most of the same packages available.
-Please note that the source installation and installation on ARM is not fully tested.
+**Manual Install:**
 
 ```sh
-wget -O - https://raw.githubusercontent.com/fusionpbx/fusionpbx-install.sh/master/devuan/pre-install.sh | sh;
-cd /usr/src/fusionpbx-install.sh/devuan && ./install.sh
-```
+# Clone the repository
+cd /usr/src
+git clone https://github.com/kietcaodev/fusionpbx-install.sh.git
 
-### FreeBSD
-FreeBSD is an operating system that has many great features like ZFS, HAST, CARP and more.
-
-```sh
-pkg install --yes git
-cd /usr/src && git clone https://github.com/fusionpbx/fusionpbx-install.sh.git
-cd /usr/src/fusionpbx-install.sh/freebsd/
+# Run the installation
+cd /usr/src/fusionpbx-install.sh/debian
+chmod +x pre-install.sh install.sh
+./pre-install.sh
 ./install.sh
 ```
 
-### CentOS
-CentOS operating system is a requirement for some companies. Don't expect video mixing to work. It will likely be a year or more for video mixing dependencies to be updated enough to work in CentOS.
+## What Gets Installed
 
-```sh
-wget -O - https://raw.githubusercontent.com/fusionpbx/fusionpbx-install.sh/master/centos/pre-install.sh | sh
-cd /usr/src/fusionpbx-install.sh/centos && ./install.sh
-```
+The installation script will set up:
 
-### Windows
-*  This powershell install for windows is currently in a "beta stage".
-*  mod_lua is missing from builds after 1.6.14. Script will download it from github.
-*  Click to download the zip file and extract it.
-*  Extract the zip file
-*  Navigate to install.ps1
-*  Click on install.ps1 then right click on install.ps1 then choose Run with Powershell
-*  If you are not already Administrator you will have to choose run as Administrator
+- **FreeSWITCH** - Open source telephony platform
+- **FusionPBX** - Web-based GUI for FreeSWITCH
+- **PostgreSQL** - Database server
+- **Nginx** - Web server
+- **PHP-FPM** - PHP processor
+- **Fail2ban** - Intrusion prevention system
+- **Monit** - Process monitoring
+- **Let's Encrypt** - SSL/TLS certificates (optional)
 
-```sh
+## Post-Installation
 
-Master https://github.com/fusionpbx/fusionpbx-install.sh/archive/master.zip
-```
+After installation completes:
+
+1. Open your web browser and navigate to your server's IP address or domain name
+2. Complete the FusionPBX web-based setup wizard
+3. Login with the default credentials provided during installation
+4. **Important:** Change the default passwords immediately
 
 ## Security Considerations
-Fail2ban is installed and pre-configured for all operating systems this repository works on besides Windows, but the default settings may not be ideal depending on your needs. Please take a look at the jail file (/etc/fail2ban/jail.local on Debian/Devuan) to configure it to suit your application and security model!
 
-## ISSUES
-If you find a bug sign up for an account on www.fusionpbx.com to report the issue.
+### Fail2ban
+Fail2ban is installed and pre-configured to protect against brute-force attacks. The default configuration includes:
+
+- SSH protection
+- FreeSWITCH SIP protection
+- Nginx web server protection
+- FusionPBX login protection
+
+Configuration file: `/etc/fail2ban/jail.local`
+
+**Recommended actions:**
+- Review and adjust ban times based on your security requirements
+- Configure email notifications for security alerts
+- Regularly review ban logs: `fail2ban-client status`
+
+### Firewall
+The script configures iptables or nftables with the following open ports:
+- 22 (SSH)
+- 80 (HTTP)
+- 443 (HTTPS)
+- 5060-5061 (SIP)
+- 5080-5081 (SIP)
+- 16384-32768 (RTP Media)
+
+### Best Practices
+1. Change all default passwords immediately after installation
+2. Enable two-factor authentication in FusionPBX
+3. Keep your system updated: `apt update && apt upgrade`
+4. Regularly backup your system and database
+5. Use strong passwords for all accounts
+6. Consider implementing IP whitelisting for admin access
+
+## Troubleshooting
+
+### Check Service Status
+```sh
+systemctl status freeswitch
+systemctl status postgresql
+systemctl status nginx
+systemctl status php*-fpm
+```
+
+### View Logs
+```sh
+# FreeSWITCH logs
+tail -f /var/log/freeswitch/freeswitch.log
+
+# Nginx logs
+tail -f /var/log/nginx/error.log
+
+# System logs
+journalctl -xe
+```
+
+### Common Issues
+
+**FreeSWITCH won't start:**
+```sh
+systemctl restart freeswitch
+journalctl -u freeswitch -n 50
+```
+
+**Database connection issues:**
+```sh
+systemctl restart postgresql
+```
+
+**Web interface not loading:**
+```sh
+systemctl restart nginx
+systemctl restart php*-fpm
+```
+
+## Backup
+
+The installation includes backup scripts in `/usr/local/bin/`:
+- `fusionpbx-backup` - Full system backup
+- `fusionpbx-maintenance` - Database maintenance
+
+Schedule regular backups with cron:
+```sh
+crontab -e
+# Add: 0 2 * * * /usr/local/bin/fusionpbx-backup
+```
+
+## Support & Documentation
+
+- **Official FusionPBX Documentation:** https://docs.fusionpbx.com
+- **FreeSWITCH Documentation:** https://freeswitch.org/confluence/
+- **Community Forum:** https://www.fusionpbx.com
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit issues or pull requests.
+
+## License
+
+This project follows the same license as FusionPBX.
+
+## Disclaimer
+
+This script is provided as-is without any warranty. Always test in a non-production environment first. Review and understand what the script does before running it on your system.
