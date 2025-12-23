@@ -128,6 +128,10 @@ cp -r /root/build/logo_basebs/* /var/www/fusionpbx/themes/default/
 echo "Change Menu Style to Inline"
 psql --host=$database_host --port=$database_port --username=$database_username -c "UPDATE v_default_settings SET default_setting_value = 'static' WHERE default_setting_subcategory = 'menu_style';"
 
+#Stop event_guard
+systemctl stop event_guard
+systemctl disable event_guard
+
 #restart nginx 
 systemctl restart nginx
 sleep 2
