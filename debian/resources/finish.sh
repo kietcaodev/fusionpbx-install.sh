@@ -132,6 +132,10 @@ psql --host=$database_host --port=$database_port --username=$database_username -
 systemctl stop event_guard
 systemctl disable event_guard
 
+#Stop email_queue
+systemctl stop email_queue
+systemctl disable email_queue
+
 #restart nginx 
 systemctl restart nginx
 sleep 2
